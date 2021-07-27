@@ -50,8 +50,14 @@
 
   function mainloop() {
     if (setUp) {
+      for (var i = 0; i < 5; i++) {
+        createEnemy();
+      }
+      createTerrain();
       setUp = false;
     }
+
+    
 
     colorRect(0, 0, canvas.width, canvas.height, "blue");
     player.drawRect();
@@ -60,6 +66,14 @@
     land.forEach(function (terrain, i, array) {
         terrain.drawRect();
       });
+
+      if (enemies.length > 0) {
+      enemies.forEach(function (enemy, i, array) {
+        enemy.drawRect();
+        enemy.enemyMove();
+
+      });
+    }
 
     }
 
@@ -75,8 +89,6 @@
         leftPressed = true;
       }
       if (evt.keyCode == RIGHT_KEY) {
-        createTerrain();
-        console.log("made");
         rightPressed = true;
       }
       if (evt.keyCode == SPACE_KEY) {
@@ -107,17 +119,31 @@
 
     function createTerrain() {
       //terrain vars
-      var tXpos = i++;
+      var tXpos = 0;
       var tYpos = canvas.height;
-      const T_XSIZE = 50;
-      var tYsize = Math.floor(Math.random() * (-150 + -80) - 100);
+      const T_XSIZE = 800;
+      var tYsize = Math.floor(Math.random() * (-100 + -80) - 100);
 
       var terrain = new Terrain(tXpos, tYpos, T_XSIZE, tYsize, 'green');
 
-      console.log("terrain");
+      console.log(tYsize);
       land.push(terrain);
     }
 
+    var enemies = [];
+
+    function createEnemy(){
+      //enemy vars
+      var eXpos = 50;
+      var eYpos = 20;
+      var eXspeed = 10;
+      var eYspeed = 10;
+      const eSize = 10;
+
+      var enemy = new Enemy(eXpos, eYpos, eSize, eSize, 'cyan', eXspeed, eYspeed);
+
+      enemies.push(enemy);
+    }
 
 
     function colorRect(x, y, w, h, c) {
