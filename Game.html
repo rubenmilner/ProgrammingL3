@@ -43,7 +43,7 @@
   var rightPressed = false;
   var spacePressed = false;
 
-  var player = new Player(pXpos, pYpos, P_SIZE, P_SIZE, 'black', pXspeed, pYspeed);
+  var player = new Player(pXpos, pYpos, P_SIZE, P_SIZE, 'silver', pXspeed, pYspeed);
 
   var setUp = true;
 
@@ -57,7 +57,6 @@
       setUp = false;
     }
 
-    
 
     colorRect(0, 0, canvas.width, canvas.height, "blue");
     player.drawRect();
@@ -66,17 +65,74 @@
     land.forEach(function (terrain, i, array) {
         terrain.drawRect();
       });
-
+ 
       if (enemies.length > 0) {
       enemies.forEach(function (enemy, i, array) {
         enemy.drawRect();
         enemy.enemyMove();
-
+        
       });
     }
 
-    }
+    if (bombs.length > 0) {
+      bombs.forEach(function (Bomb, i, array) {
+        Bomb.drawRect();
+        Bomb.BombMove();
 
+        if (Bomb.outOfBounds() || Bomb.hasCollided()) {
+          delete array[i];
+        }
+        bombs = bombs.filter(item => item !== undefined);
+  });
+}
+  }
+
+  function createTerrain() {
+    //terrain vars
+    var tXpos = 0;
+    // var tYpos = Math.floor(Math.random() * (50 + 40) + 400);
+    var tYpos = 400;
+    const T_XSIZE = 800;
+    var tYsize = canvas.height - tYpos;
+    
+    var terrain = new Terrain(tXpos, tYpos, T_XSIZE, tYsize, 'green');
+
+    console.log(tYpos);
+    land.push(terrain);
+
+  }
+  
+  var land = [];
+  var bombs = [];
+
+  var enemies = [];
+
+  function createEnemy(){
+    //enemy vars
+    const eSize = 10;
+    var eXpos = canvas.width - eSize;
+    var eYpos = 400 - eSize;
+    var eXspeed = Math.floor(Math.random() * (1+2) + 1);
+    var eYspeed = 1;
+
+    var enemy = new Enemy(eXpos, eYpos, eSize, eSize, 'cyan', eXspeed, eYspeed);
+
+    enemies.push(enemy);
+  }
+
+  function createbomb(){
+    // bomb vars
+    const B_SIZE = 10;
+    var bXpos = player.x;
+    var bYpos = player.y;
+    var bXspeed = 1;
+    var bYspeed = 5;
+
+    var bomb = new Bomb(bXpos, bYpos, B_SIZE, B_SIZE, "black",bXspeed, bYspeed);
+
+    bombs.push(bomb);
+
+  }
 
     function keyPressed(evt) {
       if (evt.keyCode == UP_KEY) {
@@ -93,8 +149,11 @@
       }
       if (evt.keyCode == SPACE_KEY) {
         spacePressed = true;
+        createbomb();
       }
     }
+
+
 
     function keyReleased(evt) {
       if (evt.keyCode == UP_KEY) {
@@ -109,42 +168,10 @@
       if (evt.keyCode == RIGHT_KEY) {
         rightPressed = false;
       }
-      if (evt.keyCode == spacePressed) {
+      if (evt.keyCode == SPACE_KEY) {
         spacePressed = false;
       }
     }
-
-
-    var land = [];
-
-    function createTerrain() {
-      //terrain vars
-      var tXpos = 0;
-      var tYpos = canvas.height;
-      const T_XSIZE = 800;
-      var tYsize = Math.floor(Math.random() * (-100 + -80) - 100);
-
-      var terrain = new Terrain(tXpos, tYpos, T_XSIZE, tYsize, 'green');
-
-      console.log(tYsize);
-      land.push(terrain);
-    }
-
-    var enemies = [];
-
-    function createEnemy(){
-      //enemy vars
-      var eXpos = 50;
-      var eYpos = 20;
-      var eXspeed = 10;
-      var eYspeed = 10;
-      const eSize = 10;
-
-      var enemy = new Enemy(eXpos, eYpos, eSize, eSize, 'cyan', eXspeed, eYspeed);
-
-      enemies.push(enemy);
-    }
-
 
     function colorRect(x, y, w, h, c) {
       canvasContext.fillStyle = c;

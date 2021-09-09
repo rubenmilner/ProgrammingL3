@@ -15,7 +15,12 @@ class Enemy {
     }
 
     enemyMove() {
-      this.xSpeed -= this.x;
-      this.ySpeed -= this.y;
+      this.x -= this.xSpeed;
+      // this.y += this.ySpeed;
+
+    }
+
+    outOfBounds() {
+      return this.x > canvas.width;
     }
 }

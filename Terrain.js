@@ -6,7 +6,7 @@ class Terrain {
       this.h = h;
       this.c = c;
     }
-
+      
     drawRect() {
       canvasContext.fillStyle = this.c;
       canvasContext.fillRect(this.x, this.y, this.w, this.h);
