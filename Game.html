@@ -65,14 +65,24 @@
     land.forEach(function (terrain, i, array) {
         terrain.drawRect();
       });
- 
+
+      if (enemies.length < 5){
+          createEnemy();
+      }
+
       if (enemies.length > 0) {
       enemies.forEach(function (enemy, i, array) {
         enemy.drawRect();
         enemy.enemyMove();
         
+      if(enemy.outOfBounds()){
+        delete array[i];
+      }
+      enemies = enemies.filter(item => item !== undefined);
+
       });
     }
+
 
     if (bombs.length > 0) {
       bombs.forEach(function (Bomb, i, array) {
@@ -111,7 +121,7 @@
     //enemy vars
     const eSize = 10;
     var eXpos = canvas.width - eSize;
-    var eYpos = 400 - eSize;
+    var eYpos = 400 - eSize;  // change to terrain.y
     var eXspeed = Math.floor(Math.random() * (1+2) + 1);
     var eYspeed = 1;
 

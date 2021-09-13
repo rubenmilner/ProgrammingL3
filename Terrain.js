@@ -12,4 +12,6 @@ class Terrain {
       canvasContext.fillRect(this.x, this.y, this.w, this.h);
     }
 
+  
+
 }

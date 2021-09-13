@@ -20,7 +20,7 @@ class Bomb {
   }
 
   outOfBounds() {
-    return this.y > canvas.height;
+    return this.y > 400; // change 400 to terrain.y
   }
 
   hasHitItem(item) {
