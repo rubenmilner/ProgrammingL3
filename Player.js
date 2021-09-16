@@ -32,10 +32,13 @@ class Player {
         this.y -= this.ySpeed;
       }
       
-      
-      if (downPressed && this.y < 400 - P_SIZE) {
+      if (downPressed) {
         this.y += this.ySpeed;
       } 
+
+      if(this.y  > 400 - P_SIZE){
+        gameRun = false;
+      }
 
     }
   }

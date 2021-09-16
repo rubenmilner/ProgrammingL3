@@ -6,6 +6,7 @@
   <script src="Enemy.js"></script>
   <script src="Bomb.js"></script>
   <script src="Terrain.js"></script>
+  <script src="Bullet.js"></script>
 </head>
 
 <body>
@@ -45,56 +46,91 @@
 
   var player = new Player(pXpos, pYpos, P_SIZE, P_SIZE, 'silver', pXspeed, pYspeed);
 
+  var startingPos = true;
+  var totalEnemies = 5;
+
   var setUp = true;
+  var gameRun = true;
+
+
+
+
+  var name = ' ';
+        while (name == ' ' || name == null) {
+            name = prompt('what is your name?', 'player') || ' ';
+        }
+
+        var difficulty = ' ';
+        while (difficulty != 'easy' && difficulty != 'hard') {
+            difficulty = prompt('Hi ' + name + ', What difficulty would you like? (easy or hard)',
+                'hard').toLowerCase()
+        }
+
+        if (difficulty == 'easy') {
+            totalEnemies = 5;
+        } else {
+            totalEnemies = 10;
+        }
+
 
 
   function mainloop() {
-    if (setUp) {
-      for (var i = 0; i < 5; i++) {
-        createEnemy();
+    if (gameRun) {
+      if (setUp) {
+        // for (var i = 0; i < 5; i++) {
+        //   createEnemy();
+        // }
+        createTerrain();
+        setUp = false;
       }
-      createTerrain();
-      setUp = false;
-    }
+
+      if (startingPos) {
+        for (i = 0; i < totalEnemies; i++) {
+          createEnemy();
+          playerYpos = canvas.height - P_SIZE * 4;
+          playerXpos = canvas.width / 2;
+        }
+        startingPos = false;
+      }
 
 
-    colorRect(0, 0, canvas.width, canvas.height, "blue");
-    player.drawRect();
-    player.playerMove();
+      colorRect(0, 0, canvas.width, canvas.height, "blue");
+      player.drawRect();
+      player.playerMove();
 
-    land.forEach(function (terrain, i, array) {
+      land.forEach(function (terrain, i, array) {
         terrain.drawRect();
       });
 
-      if (enemies.length < 5){
-          createEnemy();
-      }
+      // if (enemies.length < 5) {
+      //   createEnemy();
+      // }
 
       if (enemies.length > 0) {
-      enemies.forEach(function (enemy, i, array) {
-        enemy.drawRect();
-        enemy.enemyMove();
-        
-      if(enemy.outOfBounds()){
-        delete array[i];
+        enemies.forEach(function (enemy, i, array) {
+          enemy.drawRect();
+          enemy.enemyMove();
+
+          enemies = enemies.filter(item => item !== undefined);
+
+        });
       }
-      enemies = enemies.filter(item => item !== undefined);
 
-      });
+
+      if (bombs.length > 0) {
+        bombs.forEach(function (Bomb, i, array) {
+          Bomb.drawRect();
+          Bomb.BombMove();
+
+          if (Bomb.outOfBounds() || Bomb.hasCollided()) {
+            delete array[i];
+          }
+          bombs = bombs.filter(item => item !== undefined);
+        });
+      }
+    } else {
+      drawText(' game over', 150, 300, '30px Ariel', 'white');
     }
-
-
-    if (bombs.length > 0) {
-      bombs.forEach(function (Bomb, i, array) {
-        Bomb.drawRect();
-        Bomb.BombMove();
-
-        if (Bomb.outOfBounds() || Bomb.hasCollided()) {
-          delete array[i];
-        }
-        bombs = bombs.filter(item => item !== undefined);
-  });
-}
   }
 
   function createTerrain() {
@@ -104,25 +140,26 @@
     var tYpos = 400;
     const T_XSIZE = 800;
     var tYsize = canvas.height - tYpos;
-    
+
     var terrain = new Terrain(tXpos, tYpos, T_XSIZE, tYsize, 'green');
 
     console.log(tYpos);
     land.push(terrain);
 
   }
-  
+
   var land = [];
   var bombs = [];
+  var bullets = [];
 
   var enemies = [];
 
-  function createEnemy(){
+  function createEnemy() {
     //enemy vars
     const eSize = 10;
     var eXpos = canvas.width - eSize;
-    var eYpos = 400 - eSize;  // change to terrain.y
-    var eXspeed = Math.floor(Math.random() * (1+2) + 1);
+    var eYpos = 400 - eSize; // change to terrain.y
+    var eXspeed = Math.floor(Math.random() * (1 + 2) + 1);
     var eYspeed = 1;
 
     var enemy = new Enemy(eXpos, eYpos, eSize, eSize, 'cyan', eXspeed, eYspeed);
@@ -130,61 +167,80 @@
     enemies.push(enemy);
   }
 
-  function createbomb(){
+  function createbomb() {
     // bomb vars
     const B_SIZE = 10;
-    var bXpos = player.x;
-    var bYpos = player.y;
+    var bXpos = player.x + B_SIZE / 2;
+    var bYpos = player.y + B_SIZE;
     var bXspeed = 1;
     var bYspeed = 5;
 
-    var bomb = new Bomb(bXpos, bYpos, B_SIZE, B_SIZE, "black",bXspeed, bYspeed);
+    var bomb = new Bomb(bXpos, bYpos, B_SIZE, B_SIZE, "black", bXspeed, bYspeed);
 
     bombs.push(bomb);
 
   }
 
-    function keyPressed(evt) {
-      if (evt.keyCode == UP_KEY) {
-        upPressed = true;
-      }
-      if (evt.keyCode == DOWN_KEY) {
-        downPressed = true;
-      }
-      if (evt.keyCode == LEFT_KEY) {
-        leftPressed = true;
-      }
-      if (evt.keyCode == RIGHT_KEY) {
-        rightPressed = true;
-      }
-      if (evt.keyCode == SPACE_KEY) {
-        spacePressed = true;
-        createbomb();
-      }
+  function createBullet() {
+    // bullet vars
+    const EB_SIZE = 5;
+    var ebXpos = eXpos;
+    var ebYpos = eYpos;
+    var ebXspeed = 3;
+    var ebYspeed = 3;
+
+    var bullet = new Bullet(ebXpos, ebYpos, EB_SIZE, EB_SIZE, "red", ebXspeed, ebYspeed);
+
+    bullets.push(bullet);
+  }
+
+  function keyPressed(evt) {
+    if (evt.keyCode == UP_KEY) {
+      upPressed = true;
     }
-
-
-
-    function keyReleased(evt) {
-      if (evt.keyCode == UP_KEY) {
-        upPressed = false;
-      }
-      if (evt.keyCode == DOWN_KEY) {
-        downPressed = false;
-      }
-      if (evt.keyCode == LEFT_KEY) {
-        leftPressed = false;
-      }
-      if (evt.keyCode == RIGHT_KEY) {
-        rightPressed = false;
-      }
-      if (evt.keyCode == SPACE_KEY) {
-        spacePressed = false;
-      }
+    if (evt.keyCode == DOWN_KEY) {
+      downPressed = true;
     }
-
-    function colorRect(x, y, w, h, c) {
-      canvasContext.fillStyle = c;
-      canvasContext.fillRect(x, y, w, h);
+    if (evt.keyCode == LEFT_KEY) {
+      leftPressed = true;
     }
+    if (evt.keyCode == RIGHT_KEY) {
+      rightPressed = true;
+    }
+    if (evt.keyCode == SPACE_KEY) {
+      spacePressed = true;
+      createbomb();
+    }
+  }
+
+
+
+  function keyReleased(evt) {
+    if (evt.keyCode == UP_KEY) {
+      upPressed = false;
+    }
+    if (evt.keyCode == DOWN_KEY) {
+      downPressed = false;
+    }
+    if (evt.keyCode == LEFT_KEY) {
+      leftPressed = false;
+    }
+    if (evt.keyCode == RIGHT_KEY) {
+      rightPressed = false;
+    }
+    if (evt.keyCode == SPACE_KEY) {
+      spacePressed = false;
+    }
+  }
+
+  function colorRect(x, y, w, h, c) {
+    canvasContext.fillStyle = c;
+    canvasContext.fillRect(x, y, w, h);
+  }
+
+  function drawText(msg, x, y, f, c) {
+    canvasContext.fillStyle = c;
+    canvasContext.font = f;
+    canvasContext.fillText(msg, x, y);
+  }
 </script>

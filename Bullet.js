@@ -1,4 +1,4 @@
-class Enemy {
+class Bullet {
     constructor(x, y, w, h, c, xSpeed, ySpeed) {
       this.x = x;
       this.y = y;
@@ -14,20 +14,8 @@ class Enemy {
       canvasContext.fillRect(this.x, this.y, this.w, this.h);
     }
 
-    enemyMove() {
-      this.x -= this.xSpeed;
-      
-      if(this.x < 0){
-        this.x = canvas.width;
-        this.y = 400 - this.h;
-        this.w = 10;
-        this.h = 10;
-        this.xSpeed = Math.floor(Math.random() * (1+2) + 1);
-
-      }
-    }
-
-    outOfBounds() {
-      return this.x < 0;
+    bulletMove() {
+        this.x - this.xSpeed;
+        this.y - this.ySpeed;      
     }
 }
