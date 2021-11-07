@@ -43,7 +43,7 @@
   var leftPressed = false;
   var rightPressed = false;
   var spacePressed = false;
-
+ 
   var player = new Player(pXpos, pYpos, P_SIZE, P_SIZE, 'silver', pXspeed, pYspeed);
 
   var startingPos = true;
@@ -51,7 +51,6 @@
 
   var setUp = true;
   var gameRun = true;
-
 
 
 
@@ -63,7 +62,7 @@
         var difficulty = ' ';
         while (difficulty != 'easy' && difficulty != 'hard') {
             difficulty = prompt('Hi ' + name + ', What difficulty would you like? (easy or hard)',
-                'hard').toLowerCase()
+                'easy').toLowerCase()
         }
 
         if (difficulty == 'easy') {
@@ -77,9 +76,6 @@
   function mainloop() {
     if (gameRun) {
       if (setUp) {
-        // for (var i = 0; i < 5; i++) {
-        //   createEnemy();
-        // }
         createTerrain();
         setUp = false;
       }
@@ -87,8 +83,6 @@
       if (startingPos) {
         for (i = 0; i < totalEnemies; i++) {
           createEnemy();
-          playerYpos = canvas.height - P_SIZE * 4;
-          playerXpos = canvas.width / 2;
         }
         startingPos = false;
       }
@@ -102,9 +96,9 @@
         terrain.drawRect();
       });
 
-      // if (enemies.length < 5) {
-      //   createEnemy();
-      // }
+      if (enemies.length < totalEnemies) {
+        createEnemy();
+      }
 
       if (enemies.length > 0) {
         enemies.forEach(function (enemy, i, array) {
@@ -114,7 +108,7 @@
           enemies = enemies.filter(item => item !== undefined);
 
         });
-      }
+      }// func end
 
 
       if (bombs.length > 0) {
@@ -127,15 +121,30 @@
           }
           bombs = bombs.filter(item => item !== undefined);
         });
-      }
+      }// func end
+
+      if(bullets.length > 0){
+        bullets.forEach(function (Bullet, i, array) {
+          Bullet.drawRect();
+          Bullet.bulletMove();
+
+          if (Bullet.outOfBounds()){
+            delete array[i];
+          }
+
+          bullets = bullets.filter(item => item !== undefined);
+        });
+
+      }// func end
+
     } else {
       drawText(' game over', 150, 300, '30px Ariel', 'white');
     }
-  }
+  }// func end
 
   function createTerrain() {
     //terrain vars
-    var tXpos = 0;
+    var tXpos = 0;  
     // var tYpos = Math.floor(Math.random() * (50 + 40) + 400);
     var tYpos = 400;
     const T_XSIZE = 800;
@@ -143,16 +152,17 @@
 
     var terrain = new Terrain(tXpos, tYpos, T_XSIZE, tYsize, 'green');
 
-    console.log(tYpos);
+    // console.log(tYpos);
     land.push(terrain);
 
-  }
+  }// func end
 
   var land = [];
   var bombs = [];
   var bullets = [];
-
   var enemies = [];
+ 
+  
 
   function createEnemy() {
     //enemy vars
@@ -165,7 +175,8 @@
     var enemy = new Enemy(eXpos, eYpos, eSize, eSize, 'cyan', eXspeed, eYspeed);
 
     enemies.push(enemy);
-  }
+
+  }// func end
 
   function createbomb() {
     // bomb vars
@@ -179,21 +190,24 @@
 
     bombs.push(bomb);
 
-  }
+  }// func end
+
 
   function createBullet() {
     // bullet vars
     const EB_SIZE = 5;
-    var ebXpos = eXpos;
-    var ebYpos = eYpos;
+    var ebXpos = enemies.eXpos;
+    var ebYpos = 440;
     var ebXspeed = 3;
     var ebYspeed = 3;
 
     var bullet = new Bullet(ebXpos, ebYpos, EB_SIZE, EB_SIZE, "red", ebXspeed, ebYspeed);
+    console.log(ebXpos);
 
     bullets.push(bullet);
-  }
+  } // func end
 
+  
   function keyPressed(evt) {
     if (evt.keyCode == UP_KEY) {
       upPressed = true;
@@ -210,8 +224,9 @@
     if (evt.keyCode == SPACE_KEY) {
       spacePressed = true;
       createbomb();
+      createBullet();
     }
-  }
+  }// func end
 
 
 
@@ -231,16 +246,16 @@
     if (evt.keyCode == SPACE_KEY) {
       spacePressed = false;
     }
-  }
+  }// func end
 
   function colorRect(x, y, w, h, c) {
     canvasContext.fillStyle = c;
     canvasContext.fillRect(x, y, w, h);
-  }
+  }// func end
 
   function drawText(msg, x, y, f, c) {
     canvasContext.fillStyle = c;
     canvasContext.font = f;
     canvasContext.fillText(msg, x, y);
-  }
+  }// func end
 </script>

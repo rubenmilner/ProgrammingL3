@@ -15,7 +15,25 @@ class Bullet {
     }
 
     bulletMove() {
-        this.x - this.xSpeed;
-        this.y - this.ySpeed;      
+        this.x -= this.xSpeed;
+        this.y -= this.ySpeed;
     }
+
+    
+
+    outOfBounds(){
+      return this.y < 0;
+    }
+
+    hasHitItem(item) {
+      return (this.x + this.w > item.x && this.x < item.x + item.w) && (this.y + this.h > item.y && this.y < item.y + item.h);
+    }
+
+    hasHitEnemy(player){
+      return this.hasHitItem(player);
+  }
+
+  hasCollided(){
+    
+  }
 }
