@@ -17,7 +17,7 @@ class Enemy {
     enemyMove() {
       this.x -= this.xSpeed;
       
-      if(this.x < 0){
+      if(this.x < 0 - 1){
         this.x = canvas.width;
         this.y = 400 - this.h;
         this.w = 10;

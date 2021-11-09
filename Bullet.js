@@ -15,11 +15,13 @@ class Bullet {
     }
 
     bulletMove() {
-        this.x -= this.xSpeed;
+        // this.x -= this.xSpeed;
         this.y -= this.ySpeed;
     }
 
-    
+    bulletStartPos(){
+
+    }
 
     outOfBounds(){
       return this.y < 0;
@@ -32,8 +34,5 @@ class Bullet {
     hasHitEnemy(player){
       return this.hasHitItem(player);
   }
-
-  hasCollided(){
-    
-  }
 }
+  

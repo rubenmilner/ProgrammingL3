@@ -50,8 +50,11 @@
   var totalEnemies = 5;
 
   var setUp = true;
+  var Score = 0;
   var gameRun = true;
+  var lives = 3;
 
+  var shooting = false;
 
 
   var name = ' ';
@@ -84,7 +87,14 @@
         for (i = 0; i < totalEnemies; i++) {
           createEnemy();
         }
+        for (i = 0; i < totalEnemies; i++) {
+          createBullet();
+        }
         startingPos = false;
+      }
+
+      if (lives <= 0) {
+        gameRun = false;
       }
 
 
@@ -105,6 +115,10 @@
           enemy.drawRect();
           enemy.enemyMove();
 
+          if (enemy.outOfBounds()) {
+            lives = lives - 1;
+          }
+
           enemies = enemies.filter(item => item !== undefined);
 
         });
@@ -116,17 +130,35 @@
           Bomb.drawRect();
           Bomb.BombMove();
 
-          if (Bomb.outOfBounds() || Bomb.hasCollided()) {
+          if (Bomb.outOfBounds()) {
             delete array[i];
+          }
+
+          if (Bomb.hasCollided()){
+            delete array[i];
+            Score = Score + 1;
           }
           bombs = bombs.filter(item => item !== undefined);
         });
       }// func end
+    
+      if(shooting == false){
+        bullets.forEach(function(b,i,array){
+          b.ebXpos = enemies[i].x
+          b.ebYpos = enemies[i].y
+          console.log(b.ebXpos);
+        });
 
+        shooting = true;
+        console.log(shooting)
+      }
+        
       if(bullets.length > 0){
         bullets.forEach(function (Bullet, i, array) {
           Bullet.drawRect();
           Bullet.bulletMove();
+
+          // console.log(Bullet.y)
 
           if (Bullet.outOfBounds()){
             delete array[i];
@@ -135,10 +167,16 @@
           bullets = bullets.filter(item => item !== undefined);
         });
 
+        if(bullets.length < totalEnemies){
+          createBullet();
+        }
+
       }// func end
+      drawText('Score: ' + Score, 0, 20, '20px Ariel', 'white');
+      drawText('Lives: ' + lives, 100, 20, '20px Ariel', 'white');
 
     } else {
-      drawText(' game over', 150, 300, '30px Ariel', 'white');
+      drawText(name +' game over,' + Score, canvas.width / 3, canvas.height / 2, '30px Ariel', 'white');
     }
   }// func end
 
@@ -192,17 +230,18 @@
 
   }// func end
 
+  var bulletCounter = 0;
 
   function createBullet() {
     // bullet vars
     const EB_SIZE = 5;
-    var ebXpos = enemies.eXpos;
-    var ebYpos = 440;
+    var ebXpos = enemies[bulletCounter%totalEnemies].x;
+    var ebYpos = enemies[bulletCounter%totalEnemies].y;
     var ebXspeed = 3;
     var ebYspeed = 3;
-
+    bulletCounter++;
     var bullet = new Bullet(ebXpos, ebYpos, EB_SIZE, EB_SIZE, "red", ebXspeed, ebYspeed);
-    console.log(ebXpos);
+    // console.log(ebXpos);
 
     bullets.push(bullet);
   } // func end
@@ -224,7 +263,6 @@
     if (evt.keyCode == SPACE_KEY) {
       spacePressed = true;
       createbomb();
-      createBullet();
     }
   }// func end
 

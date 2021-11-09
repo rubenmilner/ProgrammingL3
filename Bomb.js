@@ -18,7 +18,7 @@ class Bomb {
   BombMove() {
     this.y += this.ySpeed;
   }
-
+  
   outOfBounds() {
     return this.y > 400; // change 400 to terrain.y
   }
